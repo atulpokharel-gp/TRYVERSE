@@ -9,11 +9,15 @@ TryVerse is a full-stack AI-powered fashion platform that combines body scanning
 ## ✨ Features
 
 | Feature | Description |
-|---|---|
-| 🤖 **AI Body Scan** | Upload a photo — AI maps your exact measurements in seconds |
-| 👗 **Virtual Try-On** | See how any outfit looks on your body before you buy |
-| 💬 **Smart Stylist** | Chat with your AI personal stylist for outfit advice |
-| ☁️ **Weather Styling** | Auto outfit suggestions based on today's local weather |
+|---------|-------------|
+| 🤖 AI Body Scan | Upload photos or enter measurements to generate a body shape profile |
+| 👗 Virtual Try-On | Overlay clothing on your photo with a simulated AR mirror |
+| 💬 Smart Stylist | AI chat assistant for outfit advice by occasion, weather, and budget |
+| ⛅ Weather Styling | Outfit suggestions tuned to today's weather and season |
+| 🔍 Reverse Search | Upload a fashion photo and find similar items across Zara, Amazon, Gucci, H&M, and more |
+| 🗄️ Smart Wardrobe | Save looks to Wishlist, My Wardrobe, and Try Later with notes |
+| 📊 Dashboard | Body profile, AI picks, weather widget, wardrobe preview, trending looks |
+| 🛍️ Shopping Feed | 22 mock products with category, occasion, and price filters |
 | 🔍 **Reverse Image Search** | Upload any image, find similar items across thousands of brands |
 | 🧺 **Smart Wardrobe** | Organise your clothes and discover new combinations |
 | 🛍️ **Shop** | Browse 200K+ AI-curated products from top brands |
