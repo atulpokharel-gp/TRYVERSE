@@ -8,11 +8,15 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.cloudinary.com',
+        hostname: 'res.cloudinary.com',
       },
       {
         protocol: 'https',
-        hostname: '*.githubusercontent.com',
+        hostname: 'raw.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
       },
     ],
   },
