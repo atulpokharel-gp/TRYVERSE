@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { inMemoryUsers } from "@/lib/auth";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const existing = inMemoryUsers.find((u) => u.email === email);
+    const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return NextResponse.json(
         { error: "An account with this email already exists" },
@@ -27,16 +28,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // TODO: Hash password with bcrypt in production
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name,
-      email,
-      password, // plain text for demo only
-      image: `https://picsum.photos/seed/${email}/80/80`,
-    };
-
-    inMemoryUsers.push(newUser);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        image: `https://picsum.photos/seed/${email}/80/80`,
+      },
+    });
 
     return NextResponse.json(
       { message: "Account created successfully", userId: newUser.id },
