@@ -3,32 +3,34 @@
 @tailwind utilities;
 
 :root {
+  --background: #0a0a0a;
+  --foreground: #F5F0E8;
+  --gold: #C9A84C;
+  --cream: #F5F0E8;
   --bg-primary: #0f0f0f;
   --bg-secondary: #161616;
-  --cream: #F5F0E8;
-  --gold: #C9A84C;
   --gold-light: #E2C97A;
   --foreground-rgb: 44, 42, 37;
   --background-start-rgb: 250, 247, 240;
   --background-end-rgb: 245, 239, 224;
 }
 
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1a1a1a; }
+::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 3px; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
 @layer base {
   * {
     @apply box-border;
-  }
-
-  html {
-    @apply scroll-smooth;
-  }
-
-  body {
-    color: rgb(var(--foreground-rgb));
-    background-color: rgb(var(--background-start-rgb));
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
   }
 }
 
@@ -56,7 +58,6 @@
            transition-all duration-200;
   }
 
-  /* Dark theme utilities */
   .glass-dark {
     @apply bg-white/5 backdrop-blur-md border border-white/10;
   }
