@@ -163,7 +163,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center gap-2 mb-4">
                 <Cloud className="w-4 h-4 text-sky-400" />
-                <h3 className="font-semibold text-[#F5F0E8] text-sm">Today's Weather</h3>
+                <h3 className="font-semibold text-[#F5F0E8] text-sm">Today&apos;s Weather</h3>
               </div>
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-4xl">☀️</span>

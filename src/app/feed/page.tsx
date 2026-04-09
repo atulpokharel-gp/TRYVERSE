@@ -29,7 +29,7 @@ export default function FeedPage() {
     const price = priceRanges[priceIdx];
     return mockProducts.filter((p) => {
       if (category !== "All" && p.category !== category) return false;
-      if (occasion !== "All" && !p.occasions.includes(occasion as never)) return false;
+      if (occasion !== "All" && !p.occasions?.includes(occasion as never)) return false;
       if (p.price < price.min || p.price > price.max) return false;
       return true;
     });

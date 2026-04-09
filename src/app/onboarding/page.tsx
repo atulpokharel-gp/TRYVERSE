@@ -101,7 +101,7 @@ export default function OnboardingPage() {
               <div>
                 <h1 className="text-4xl font-serif mb-3">Welcome to TryVerse</h1>
                 <p className="text-[#F5F0E8]/60 leading-relaxed">
-                  Your AI fashion universe. We'll personalise everything to your unique body,
+                  Your AI fashion universe. We&apos;ll personalise everything to your unique body,
                   style, and budget. It only takes 2 minutes.
                 </p>
               </div>
@@ -227,7 +227,7 @@ export default function OnboardingPage() {
             <div className="space-y-8">
               <div>
                 <h2 className="text-3xl font-serif mb-2">Favourite Brands</h2>
-                <p className="text-[#F5F0E8]/50 text-sm">Select brands you love. We'll prioritise them in recommendations.</p>
+                <p className="text-[#F5F0E8]/50 text-sm">Select brands you love. We&apos;ll prioritise them in recommendations.</p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
