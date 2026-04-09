@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 :root {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #161616;
+  --cream: #F5F0E8;
+  --gold: #C9A84C;
+  --gold-light: #E2C97A;
   --foreground-rgb: 44, 42, 37;
   --background-start-rgb: 250, 247, 240;
   --background-end-rgb: 245, 239, 224;
@@ -19,12 +24,7 @@
 
   body {
     color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        rgb(var(--background-end-rgb))
-      )
-      rgb(var(--background-start-rgb));
+    background-color: rgb(var(--background-start-rgb));
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -54,5 +54,30 @@
            text-charcoal-900 placeholder:text-charcoal-400
            focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent
            transition-all duration-200;
+  }
+
+  /* Dark theme utilities */
+  .glass-dark {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .glass-light {
+    @apply bg-black/5 backdrop-blur-md border border-black/10;
+  }
+
+  .gold-text {
+    color: var(--gold);
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #C9A84C, #E2C97A, #C9A84C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark-section {
+    background-color: var(--bg-primary);
+    color: var(--cream);
   }
 }
