@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String          @id @default(cuid())
+  email                String          @unique
+  name                 String?
+  password             String?
+  image                String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  gender               String?
+  stylePreference      String?
+  bodyType             String?
+  sizeCategory         String?
+  favoriteBrands       String?         // JSON stored as string in SQLite
+  budgetMin            Float?
+  budgetMax            Float?
+  occasionPreferences  String?         // JSON stored as string in SQLite
+
+  bodyProfile          BodyProfile?
+  wardrobeItems        WardrobeItem[]
+  chatMessages         ChatMessage[]
+  recentSearches       RecentSearch[]
+}
+
+model BodyProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  height      Float?
+  weight      Float?
+  chest       Float?
+  waist       Float?
+  hips        Float?
+  shoulders   Float?
+  bodyShape   String?
+  sizeCategory String?
+  fitNotes    String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id                    String         @id @default(cuid())
+  name                  String
+  brand                 String
+  price                 Float
+  originalPrice         Float?
+  image                 String
+  category              String
+  tags                  String?        // JSON stored as string in SQLite
+  bodyShapeCompatibility String?       // JSON stored as string in SQLite
+  weatherSuitability    String?        // JSON stored as string in SQLite
+  occasions             String?        // JSON stored as string in SQLite
+  sizes                 String?        // JSON stored as string in SQLite
+  colors                String?        // JSON stored as string in SQLite
+  source                String?
+  rating                Float?
+  reviewCount           Int?
+  isNew                 Boolean        @default(false)
+  isTrending            Boolean        @default(false)
+
+  wardrobeItems         WardrobeItem[]
+}
+
+model WardrobeItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  notes     String?
+  addedAt   DateTime @default(now())
+  category  String   @default("wardrobe") // wishlist / wardrobe / tryLater
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RecentSearch {
+  id        String   @id @default(cuid())
+  userId    String
+  query     String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

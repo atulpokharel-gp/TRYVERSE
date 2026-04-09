@@ -1,26 +1,84 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0a0a;
+  --foreground: #F5F0E8;
+  --gold: #C9A84C;
+  --cream: #F5F0E8;
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #161616;
+  --gold-light: #E2C97A;
+  --foreground-rgb: 44, 42, 37;
+  --background-start-rgb: 250, 247, 240;
+  --background-end-rgb: 245, 239, 224;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1a1a1a; }
+::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 3px; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-charcoal-900 text-cream-100 px-6 py-3 rounded-lg font-sans font-medium
+           hover:bg-charcoal-800 transition-colors duration-200 focus:outline-none
+           focus:ring-2 focus:ring-charcoal-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-cream-200 text-charcoal-900 px-6 py-3 rounded-lg font-sans font-medium
+           hover:bg-cream-300 transition-colors duration-200 focus:outline-none
+           focus:ring-2 focus:ring-charcoal-300 focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-card p-6;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-3 rounded-lg border border-charcoal-200 bg-white
+           text-charcoal-900 placeholder:text-charcoal-400
+           focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .glass-dark {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .glass-light {
+    @apply bg-black/5 backdrop-blur-md border border-black/10;
+  }
+
+  .gold-text {
+    color: var(--gold);
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #C9A84C, #E2C97A, #C9A84C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark-section {
+    background-color: var(--bg-primary);
+    color: var(--cream);
+  }
 }

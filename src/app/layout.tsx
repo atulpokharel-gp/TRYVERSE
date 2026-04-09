@@ -1,29 +1,28 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Providers from "./providers";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import type { Metadata } from 'next'
+import './globals.css'
+import Providers from '@/components/Providers'
 
 export const metadata: Metadata = {
-  title: "TryVerse — Try Before You Buy. From Every Angle.",
-  description:
-    "AI-powered fashion shopping: body-aware recommendations, virtual try-on, smart wardrobe, and cross-platform product discovery.",
-};
+  title: 'TryVerse - Your AI Fashion Universe',
+  description: 'Scan your body. Find your style. Try before you buy. AI-powered fashion recommendations tailored to you.',
+  keywords: ['fashion', 'AI stylist', 'virtual try-on', 'body scan', 'style recommendations'],
+  openGraph: {
+    title: 'TryVerse - Your AI Fashion Universe',
+    description: 'Scan your body. Find your style. Try before you buy.',
+    type: 'website',
+  },
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-white text-gray-900 font-sans">
-        <Providers>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </Providers>
+    <html lang="en" className="scroll-smooth">
+      <body className="font-sans antialiased">
+        <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }

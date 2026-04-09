@@ -1,70 +1,70 @@
-import type { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import { NextAuthOptions } from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import bcrypt from 'bcryptjs'
+import { prisma } from './db'
 
-/**
- * In-memory user store for MVP/demo purposes.
- *
- * TODO: Replace with a real database adapter (e.g., Prisma + Postgres).
- * Integration point: swap inMemoryUsers with a PrismaAdapter + real DB queries.
- *
- * WARNING: Plain-text passwords are used here for demo only.
- * In production, always hash passwords with bcrypt or argon2.
- */
-export const inMemoryUsers: Array<{
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  image?: string;
-}> = [
-  {
-    id: "demo-user-1",
-    name: "Demo User",
-    email: "demo@tryverse.com",
-    password: "demo1234",
-    image: "https://picsum.photos/seed/demouser/80/80",
-  },
-];
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is not set')
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const user = inMemoryUsers.find(
-          (u) =>
-            u.email === credentials.email &&
-            u.password === credentials.password
-        );
-        if (!user) return null;
-        return { id: user.id, name: user.name, email: user.email, image: user.image };
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        })
+
+        if (!user || !user.password) {
+          return null
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        )
+
+        if (!isPasswordValid) {
+          return null
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        }
       },
     }),
   ],
-  pages: {
-    signIn: "/auth/signin",
-  },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
-      if (session.user && token.id) {
-        (session.user as { id?: string }).id = token.id as string;
+      if (session.user) {
+        session.user.id = token.id as string
       }
-      return session;
+      return session
     },
   },
+  pages: {
+    signIn: '/auth/login',
+  },
   secret: process.env.NEXTAUTH_SECRET,
-};
+}

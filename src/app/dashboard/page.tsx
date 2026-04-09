@@ -1,187 +1,212 @@
-"use client";
+'use client'
 
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import Image from "next/image";
-import { Scan, MessageSquare, Archive, Search, Cloud, TrendingUp, Bell, RefreshCw } from "lucide-react";
-import BodyAvatar from "@/components/body/BodyAvatar";
+import { useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { Scan, Upload, Wand2, Shirt, Cloud, Sparkles, Bell, ArrowRight, TrendingUp } from 'lucide-react'
+import { getTrendingProducts } from '@/data/products'
+import ProductCard from '@/components/ProductCard'
 
 const quickActions = [
-  { href: "/body-scan", label: "Scan Body", icon: Scan, color: "bg-violet-600" },
-  { href: "/stylist", label: "Ask Stylist", icon: MessageSquare, color: "bg-pink-600" },
-  { href: "/wardrobe", label: "My Wardrobe", icon: Archive, color: "bg-emerald-600" },
-  { href: "/reverse-search", label: "Find Similar", icon: Search, color: "bg-amber-600" },
-];
+  { href: '/body-scan', label: 'Scan Body', icon: Scan, desc: 'Get your body profile', color: 'from-purple-500/20 to-purple-700/10' },
+  { href: '/try-on', label: 'Upload Outfit', icon: Upload, desc: 'Try clothes virtually', color: 'from-[#C9A84C]/20 to-[#C9A84C]/5' },
+  { href: '/stylist', label: 'Ask Stylist', icon: Wand2, desc: 'AI style advice', color: 'from-emerald-500/20 to-emerald-700/10' },
+  { href: '/wardrobe', label: 'View Wardrobe', icon: Shirt, desc: 'Your saved items', color: 'from-sky-500/20 to-sky-700/10' },
+]
 
-const trendingLooks = [
-  { id: "t1", name: "Coastal Grandma", imageUrl: "https://picsum.photos/seed/trend1/300/400" },
-  { id: "t2", name: "Quiet Luxury", imageUrl: "https://picsum.photos/seed/trend2/300/400" },
-  { id: "t3", name: "Dark Academia", imageUrl: "https://picsum.photos/seed/trend3/300/400" },
-  { id: "t4", name: "Y2K Revival", imageUrl: "https://picsum.photos/seed/trend4/300/400" },
-];
+const weatherOutfits = [
+  { name: 'Linen Slip Dress + Sandals', tags: ['Breezy', 'Casual'] },
+  { name: 'Crop Top + Palazzo Pants', tags: ['Trendy', 'Comfortable'] },
+  { name: 'Oversized Tee + White Shorts', tags: ['Minimal', 'Cool'] },
+]
+
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+}
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
-  const name = session?.user?.name ?? "there";
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'unauthenticated') router.push('/auth/login')
+  }, [status, router])
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#C9A84C] border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!session) return null
+
+  const firstName = session.user?.name?.split(' ')[0] ?? 'Darling'
+  const trending = getTrendingProducts().slice(0, 4)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Background intelligence banner */}
-      <div className="mb-6 flex items-center gap-3 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-purple-50 px-5 py-3">
-        <RefreshCw className="h-4 w-4 text-indigo-600 shrink-0" />
-        <p className="text-sm text-indigo-700">
-          <strong>Overnight update:</strong> Your feed was refreshed • 3 better deals found • 2 items back in stock
-        </p>
-        <Bell className="ml-auto h-4 w-4 text-indigo-400 shrink-0" />
-      </div>
+    <div className="min-h-screen bg-[#0a0a0a] text-[#F5F0E8]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-gray-900">
-          Good morning, {name.split(" ")[0]} 👋
-        </h1>
-        <p className="mt-1 text-gray-500">Here&apos;s your personalized fashion dashboard.</p>
-      </div>
+        {/* Feed refresh banner */}
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.4 }}
+          className="mb-8 flex items-center gap-3 bg-[#C9A84C]/10 border border-[#C9A84C]/20 rounded-2xl px-5 py-3"
+        >
+          <Bell className="w-4 h-4 text-[#C9A84C] flex-shrink-0" />
+          <span className="text-sm text-[#F5F0E8]/80">
+            <span className="text-[#C9A84C] font-semibold">Your Feed was refreshed overnight</span>
+            {' '}— 47 new items personalized for you.
+          </span>
+        </motion.div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left column */}
-        <div className="space-y-6 lg:col-span-2">
-          {/* Quick actions */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {quickActions.map((action) => {
-                const Icon = action.icon;
-                return (
+        {/* Greeting */}
+        <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.05 }} className="mb-10">
+          <p className="text-[#C9A84C] text-sm font-medium tracking-widest uppercase mb-1">Welcome back</p>
+          <h1 className="font-serif text-4xl md:text-5xl text-[#F5F0E8]">
+            Hello, {firstName} ✨
+          </h1>
+          <p className="mt-2 text-white/40 text-base">Your personal style universe is ready.</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main column */}
+          <div className="lg:col-span-2 space-y-8">
+
+            {/* Quick actions */}
+            <motion.section {...fadeUp} transition={{ delay: 0.1, duration: 0.4 }}>
+              <h2 className="text-lg font-semibold text-[#F5F0E8] mb-4">Quick Actions</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {quickActions.map(({ href, label, icon: Icon, desc, color }) => (
                   <Link
-                    key={action.href}
-                    href={action.href}
-                    className="flex flex-col items-center gap-2 rounded-xl p-4 text-center transition-all hover:bg-gray-50 hover:scale-105"
+                    key={href}
+                    href={href}
+                    className={`group relative rounded-2xl bg-gradient-to-br ${color} border border-white/10 p-5 hover:border-white/20 transition-all duration-300 hover:scale-[1.02]`}
                   >
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${action.color}`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <span className="text-xs font-semibold text-gray-700">{action.label}</span>
+                    <Icon className="w-6 h-6 text-[#C9A84C] mb-3" />
+                    <p className="font-semibold text-[#F5F0E8] text-sm">{label}</p>
+                    <p className="text-white/40 text-xs mt-0.5">{desc}</p>
+                    <ArrowRight className="w-3.5 h-3.5 text-white/30 absolute top-5 right-5 group-hover:text-[#C9A84C] transition-colors" />
                   </Link>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            </motion.section>
+
+            {/* Trending */}
+            <motion.section {...fadeUp} transition={{ delay: 0.15, duration: 0.4 }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-[#C9A84C]" />
+                  <h2 className="text-lg font-semibold text-[#F5F0E8]">Trending Now</h2>
+                </div>
+                <Link href="/shop" className="text-sm text-[#C9A84C] hover:underline">
+                  View all
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {trending.map(product => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onTryOn={() => router.push('/try-on')}
+                    onFindSimilar={() => router.push('/search')}
+                  />
+                ))}
+              </div>
+            </motion.section>
           </div>
 
-          {/* AI stylist recommendations */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">AI Stylist Picks for You</h2>
-              <Link href="/stylist" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-                Open Chat →
+          {/* Sidebar column */}
+          <div className="space-y-6">
+
+            {/* Body profile card */}
+            <motion.div
+              {...fadeUp}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm p-6"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <Scan className="w-4 h-4 text-[#C9A84C]" />
+                <h3 className="font-semibold text-[#F5F0E8] text-sm">Body Profile</h3>
+              </div>
+              <div className="space-y-3 mb-4">
+                {[
+                  { label: 'Body Shape', value: '—' },
+                  { label: 'Size', value: '—' },
+                  { label: 'Height', value: '—' },
+                ].map(({ label, value }) => (
+                  <div key={label} className="flex items-center justify-between">
+                    <span className="text-xs text-white/40">{label}</span>
+                    <span className="text-xs text-white/70">{value}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-white/40 mb-4">Complete your body profile for personalized recommendations.</p>
+              <Link
+                href="/body-scan"
+                className="block w-full text-center bg-[#C9A84C] text-black text-sm font-semibold py-2.5 rounded-xl hover:bg-[#e0bb5a] transition-colors"
+              >
+                Complete Profile
               </Link>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {[
-                { seed: "rec1", name: "Office Power Look", desc: "Tailored blazer + pleated trousers", price: "$228" },
-                { seed: "rec2", name: "Weekend Casual", desc: "Linen shirt + wide-leg pants", price: "$124" },
-                { seed: "rec3", name: "Evening Glam", desc: "Silk slip dress + strappy sandals", price: "$224" },
-              ].map((rec) => (
-                <div key={rec.seed} className="rounded-xl overflow-hidden ring-1 ring-gray-100 hover:shadow-md transition-shadow">
-                  <div className="relative h-40 bg-gray-100">
-                    <Image src={`https://picsum.photos/seed/${rec.seed}/300/200`} alt={rec.name} fill className="object-cover" sizes="200px" />
-                  </div>
-                  <div className="p-3">
-                    <p className="text-xs font-bold text-gray-900">{rec.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{rec.desc}</p>
-                    <p className="text-xs font-semibold text-indigo-600 mt-1">{rec.price}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+            </motion.div>
 
-          {/* Trending looks */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <TrendingUp className="h-5 w-5 text-pink-600" /> Trending Now
-              </h2>
-              <Link href="/feed" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-                Shop Feed →
+            {/* Weather widget */}
+            <motion.div
+              {...fadeUp}
+              transition={{ delay: 0.25, duration: 0.4 }}
+              className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm p-6"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <Cloud className="w-4 h-4 text-sky-400" />
+                <h3 className="font-semibold text-[#F5F0E8] text-sm">Today's Weather</h3>
+              </div>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="text-4xl">☀️</span>
+                <div>
+                  <p className="text-2xl font-bold text-[#F5F0E8]">24°C</p>
+                  <p className="text-xs text-white/40">Sunny & warm</p>
+                </div>
+              </div>
+              <p className="text-xs text-[#C9A84C] font-semibold uppercase tracking-wider mb-3">Outfit Suggestions</p>
+              <div className="space-y-2">
+                {weatherOutfits.map((outfit, i) => (
+                  <div key={i} className="bg-white/5 rounded-xl p-3">
+                    <p className="text-xs text-[#F5F0E8] font-medium mb-1">{outfit.name}</p>
+                    <div className="flex gap-1">
+                      {outfit.tags.map(tag => (
+                        <span key={tag} className="text-[10px] bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/20 px-1.5 py-0.5 rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Personalized tip */}
+            <motion.div
+              {...fadeUp}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              className="rounded-2xl bg-gradient-to-br from-[#C9A84C]/10 to-purple-500/5 border border-[#C9A84C]/20 p-6"
+            >
+              <Sparkles className="w-5 h-5 text-[#C9A84C] mb-3" />
+              <p className="text-sm font-semibold text-[#F5F0E8] mb-1">Stylist Tip</p>
+              <p className="text-xs text-white/50 leading-relaxed">
+                Pair earth tones with gold accessories for an effortlessly chic look this season.
+              </p>
+              <Link href="/stylist" className="mt-3 inline-flex items-center gap-1 text-xs text-[#C9A84C] hover:underline">
+                Ask your stylist <ArrowRight className="w-3 h-3" />
               </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {trendingLooks.map((look) => (
-                <div key={look.id} className="group cursor-pointer">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100">
-                    <Image src={look.imageUrl} alt={look.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="150px" />
-                  </div>
-                  <p className="mt-2 text-xs font-semibold text-gray-700 text-center">{look.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Right column */}
-        <div className="space-y-6">
-          {/* Weather widget */}
-          <div className="rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 p-6 text-white shadow-sm">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider opacity-75">Today&apos;s Weather</p>
-                <p className="mt-1 text-3xl font-black">68°F</p>
-                <p className="text-sm opacity-90">Partly Cloudy · New York</p>
-              </div>
-              <span className="text-5xl">⛅</span>
-            </div>
-            <div className="mt-4 rounded-xl bg-white/20 p-3">
-              <div className="flex items-center gap-2">
-                <Cloud className="h-4 w-4" />
-                <p className="text-xs font-medium">Spring vibes — try florals and a trench coat today!</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Body profile */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Body Profile</h2>
-              <Link href="/body-scan" className="text-xs font-semibold text-indigo-600">Update →</Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <BodyAvatar shape="hourglass" size="sm" />
-              <div>
-                <p className="text-sm font-bold text-gray-900">Hourglass</p>
-                <p className="text-xs text-gray-500 mt-0.5">Size: M · Top: M · Bottom: 28</p>
-                <div className="mt-2 space-y-1">
-                  {["Wrap dresses ✓", "High-waisted ✓", "Fitted blazers ✓"].map((t) => (
-                    <p key={t} className="text-xs text-emerald-600">{t}</p>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Saved wardrobe preview */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">My Wardrobe</h2>
-              <Link href="/wardrobe" className="text-xs font-semibold text-indigo-600">View All →</Link>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { seed: "blazer10", name: "Tailored Blazer" },
-                { seed: "dress1", name: "Wrap Dress" },
-                { seed: "knit9", name: "Knit Sweater" },
-              ].map((item) => (
-                <div key={item.seed} className="group cursor-pointer">
-                  <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
-                    <Image src={`https://picsum.photos/seed/${item.seed}/200/200`} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform" sizes="80px" />
-                  </div>
-                  <p className="mt-1 text-xs text-gray-600 text-center truncate">{item.name}</p>
-                </div>
-              ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

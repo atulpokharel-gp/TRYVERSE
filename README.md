@@ -1,8 +1,8 @@
-# TryVerse
+# TryVerse — AI Fashion Universe
 
-> **Try Before You Buy. From Every Angle.**
+> **Scan your body. Find your style. Try before you buy.**
 
-TryVerse is an AI-powered fashion shopping platform that combines body-aware shopping, virtual fitting, wardrobe planning, weather-based styling, and cross-platform product discovery.
+TryVerse is a full-stack AI-powered fashion platform that combines body scanning, virtual try-on, and personalised styling into one seamless experience. Built with Next.js 14 App Router, TypeScript, Tailwind CSS, Prisma, and NextAuth.
 
 ---
 
@@ -18,54 +18,99 @@ TryVerse is an AI-powered fashion shopping platform that combines body-aware sho
 | 🗄️ Smart Wardrobe | Save looks to Wishlist, My Wardrobe, and Try Later with notes |
 | 📊 Dashboard | Body profile, AI picks, weather widget, wardrobe preview, trending looks |
 | 🛍️ Shopping Feed | 22 mock products with category, occasion, and price filters |
+| 🔍 **Reverse Image Search** | Upload any image, find similar items across thousands of brands |
+| 🧺 **Smart Wardrobe** | Organise your clothes and discover new combinations |
+| 🛍️ **Shop** | Browse 200K+ AI-curated products from top brands |
+| ⚙️ **Background Jobs** | Nightly trend refresh, price updates, and restock alerts |
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + custom CSS variables
+- **Database**: SQLite (dev) / PostgreSQL (prod) via [Prisma ORM](https://www.prisma.io/)
+- **Auth**: [NextAuth.js v4](https://next-auth.js.org/) (Credentials + session)
+- **State**: Zustand
+- **Animation**: Framer Motion
+- **Icons**: Lucide React
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- npm 9+
 
-### Installation
+- Node.js 18+
+- npm or yarn
+
+### 1. Clone the repository
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/atulpokharel-gp/TRYVERSE
-cd TRYVERSE
+git clone https://github.com/your-org/tryverse.git
+cd tryverse
+```
 
-# 2. Install dependencies
+### 2. Install dependencies
+
+```bash
 npm install
+```
 
-# 3. Set up environment variables
+### 3. Set up environment variables
+
+```bash
 cp .env.example .env.local
-# Edit .env.local and set NEXTAUTH_SECRET to any random string
+```
 
-# 4. Start the development server
+Open `.env.local` and fill in the required values (see [Environment Variables](#-environment-variables) below).
+
+### 4. Generate Prisma client
+
+```bash
+npx prisma generate
+```
+
+### 5. Push the database schema
+
+```bash
+npx prisma db push
+```
+
+### 6. (Optional) Seed the database
+
+```bash
+npm run db:seed
+```
+
+This creates 2 test users, body profiles, 10 products, and sample wardrobe items.
+
+**Test credentials:**
+- `alex@tryverse.com` / `password123`
+- `jordan@tryverse.com` / `password123`
+
+### 7. Start the development server
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
-
-### Demo Credentials
-```
-Email:    demo@tryverse.com
-Password: demo1234
-```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🏗️ Tech Stack
+## �� Environment Variables
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Authentication | NextAuth.js v4 (credentials provider) |
-| State | Zustand + React hooks |
-| Icons | Lucide React |
-| Database | In-memory (MVP) — see Future Integrations |
+| Variable | Required | Description |
+|---|---|---|
+| `DATABASE_URL` | ✅ | SQLite: `file:./dev.db` — PostgreSQL: full connection string |
+| `NEXTAUTH_URL` | ✅ | Your app URL (e.g. `http://localhost:3000`) |
+| `NEXTAUTH_SECRET` | ✅ | Random secret — generate with `openssl rand -base64 32` |
+| `OPENAI_API_KEY` | ⬜ | Powers the real AI Stylist chat |
+| `WEATHER_API_KEY` | ⬜ | OpenWeatherMap key for weather-based styling |
+| `STRIPE_SECRET_KEY` | ⬜ | Stripe secret key for payment processing |
+| `STRIPE_PUBLISHABLE_KEY` | ⬜ | Stripe publishable key for frontend checkout |
 
 ---
 
@@ -73,172 +118,95 @@ Password: demo1234
 
 ```
 src/
-├── app/
-│   ├── page.tsx                 # Landing page
-│   ├── layout.tsx               # Root layout with Navbar + Footer
-│   ├── providers.tsx            # NextAuth SessionProvider
-│   ├── auth/
-│   │   ├── signin/page.tsx      # Sign-in page
-│   │   └── signup/page.tsx      # Sign-up page
-│   ├── dashboard/page.tsx       # User dashboard
-│   ├── feed/page.tsx            # Shopping feed with filters
-│   ├── stylist/page.tsx         # AI stylist chat
-│   ├── body-scan/page.tsx       # Body scan + measurements
-│   ├── try-on/page.tsx          # Virtual try-on
-│   ├── wardrobe/page.tsx        # Wardrobe / wishlist
-│   ├── reverse-search/page.tsx  # Reverse image search
-│   ├── profile/page.tsx         # User preferences
-│   └── api/
-│       ├── auth/[...nextauth]/  # NextAuth handler
-│       ├── auth/register/       # User registration
-│       ├── products/            # Product catalog API
-│       ├── body-scan/           # Body analysis API
-│       ├── stylist/chat/        # AI stylist API
-│       ├── wardrobe/            # Wardrobe CRUD API
-│       ├── reverse-search/      # Reverse search API
-│       └── weather/             # Weather API
-├── components/
-│   ├── layout/
-│   │   ├── Navbar.tsx
-│   │   └── Footer.tsx
-│   ├── products/
-│   │   └── ProductCard.tsx
-│   ├── stylist/
-│   │   └── ChatMessage.tsx
-│   └── body/
-│       └── BodyAvatar.tsx       # SVG body shape avatar
-├── data/
-│   ├── products.ts              # 22 mock fashion products
-│   ├── testimonials.ts          # Landing page testimonials
-│   └── features.ts              # Feature highlights
+├── app/                    # Next.js App Router pages
+│   ├── page.tsx            # Landing page
+│   ├── layout.tsx          # Root layout + providers
+│   ├── globals.css         # Global styles + Tailwind
+│   ├── auth/               # Login & signup pages
+│   ├── dashboard/          # User dashboard
+│   ├── body-scan/          # AI body measurement page
+│   ├── shop/               # Product browse + filter
+│   ├── wardrobe/           # Virtual wardrobe manager
+│   ├── try-on/             # Virtual try-on experience
+│   ├── stylist/            # AI stylist chat
+│   ├── search/             # Reverse image search
+│   ├── profile/            # User profile & preferences
+│   ├── onboarding/         # New user setup flow
+│   ├── admin/              # Background jobs dashboard
+│   └── api/                # API route handlers
+│       ├── auth/           # NextAuth + signup
+│       ├── products/       # Product endpoints
+│       ├── wardrobe/       # Wardrobe CRUD
+│       ├── body-profile/   # Body data endpoints
+│       └── chat/           # AI stylist chat API
+├── components/             # Reusable UI components
+│   ├── layout/             # Header, Footer
+│   ├── ui/                 # Button, Card, Input, Badge...
+│   ├── Providers.tsx       # NextAuth session provider
+│   └── ProductCard.tsx     # Product display card
 ├── lib/
-│   ├── auth.ts                  # NextAuth config + in-memory user store
-│   ├── body-analysis.ts         # Body measurements → shape/size analysis
-│   ├── mock-ai.ts               # Keyword-based stylist response generator
-│   ├── weather.ts               # Mock weather service
-│   └── utils.ts                 # General utilities (cn, formatPrice, etc.)
+│   ├── auth.ts             # NextAuth config
+│   └── db.ts               # Prisma client singleton
+├── data/
+│   ├── products.ts         # Mock product data
+│   └── mockProducts.ts     # Extended mock data
 └── types/
-    ├── product.ts               # Product, FilterOptions types
-    ├── user.ts                  # UserProfile, BodyProfile, WardrobeItem types
-    └── stylist.ts               # ChatMessage, StyleRecommendation types
+    ├── index.ts            # Shared TypeScript types
+    └── next-auth.d.ts      # NextAuth type extensions
+
+prisma/
+├── schema.prisma           # Database schema
+└── seed.ts                 # Database seed script
 ```
 
 ---
 
-## 🌱 Seed Data
+## �� Available Scripts
 
-The app ships with **22 mock fashion products** in `src/data/products.ts` covering:
-- Dresses (Wrap, Silk Slip, Bodycon, Floral Skirt)
-- Tops (Button Shirt, Knit Sweater, Linen Shirt, Cashmere Turtleneck, Cardigan)
-- Pants (Skinny Jeans, Wide-Leg Linen, Pleated Trousers)
-- Jackets (Trench Coat, Blazer, Puffer, Leather Jacket, Rain Jacket)
-- Shoes (Ankle Boots, Sneakers, Strappy Sandals)
-- Accessories (Crossbody Bag, Gold Hoops)
-
-Each product includes: size range, body shape compatibility, weather suitability, occasion tags, source platform, rating, fit estimate.
-
----
-
-## 🔧 Available Scripts
-
-```bash
-npm run dev      # Start development server (http://localhost:3000)
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
-```
+| Script | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run db:push` | Push schema to database |
+| `npm run db:seed` | Seed database with test data |
+| `npm run db:studio` | Open Prisma Studio GUI |
 
 ---
 
 ## 🔮 Future Integrations
 
-### Real AI Body Scanning
-Replace the measurement-based analysis in `src/lib/body-analysis.ts`:
-```typescript
-// Integration point in body-analysis.ts
-// POST photos to a FastAPI service wrapping MediaPipe / OpenPose / custom CV model
-const response = await fetch(process.env.BODY_SCAN_API_URL, {
-  method: "POST",
-  body: formData, // front + side photos
-});
-```
-
-### OpenAI-Powered Stylist
-Replace `generateStylistResponse()` in `src/lib/mock-ai.ts`:
-```typescript
-// Integration point in src/app/api/stylist/chat/route.ts
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const completion = await openai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [systemPrompt, ...conversationHistory],
-});
-```
-
-### Live Weather API
-Replace `getMockWeather()` in `src/lib/weather.ts`:
-```typescript
-// Integration point in src/lib/weather.ts
-const response = await fetch(
-  `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.WEATHER_API_KEY}`
-);
-```
-
-### Real Database (Prisma + PostgreSQL)
-Replace the in-memory stores:
-```typescript
-// src/lib/auth.ts — replace inMemoryUsers with:
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
-// ...
-adapter: PrismaAdapter(prisma),
-
-// src/app/api/wardrobe/route.ts — replace wardrobeStore with:
-const items = await prisma.wardrobeItem.findMany({ where: { userId } });
-```
-
-### AR/WebXR Virtual Try-On
-Upgrade `src/app/try-on/page.tsx`:
-```typescript
-// Integration point for WebXR Body Tracking API
-// or a third-party AR SDK (e.g., Snap AR, 8th Wall)
-const session = await navigator.xr.requestSession("immersive-ar", {
-  requiredFeatures: ["hit-test", "dom-overlay"],
-});
-```
-
-### Live E-Commerce Search APIs
-Replace the mock reverse search in `src/app/api/reverse-search/route.ts`:
-- Google Cloud Vision API for image recognition
-- SERP API / SerpAPI for Google Shopping results
-- Amazon Product Advertising API
-- Custom CLIP-based embedding similarity search
+| Integration | Purpose |
+|---|---|
+| **Real AI Body Scanning** | MediaPipe / custom CV model for accurate measurements from photos |
+| **AR / WebXR Try-On** | Real-time augmented reality overlay of clothing via WebXR API |
+| **OpenAI GPT-4o** | Power the AI Stylist with genuine conversational intelligence |
+| **OpenWeatherMap API** | Live weather data for auto location-based outfit suggestions |
+| **Live Product Scraping** | Puppeteer + cheerio pipeline for real-time brand price & stock sync |
+| **Stripe Payments** | In-app checkout with saved cards and Apple/Google Pay |
+| **Push Notifications** | Restock alerts, price drops, and trend notifications |
+| **3D Body Avatar** | Three.js avatar rendered from body measurements for try-on |
 
 ---
 
-## 📊 Background Intelligence Architecture
+## 📸 Screenshots
 
-The `RefreshCw` banner on the dashboard represents a nightly background job concept:
-- **Trend refresh**: Scrape fashion trend APIs and update product tags
-- **Price monitoring**: Check for price drops on saved wardrobe items
-- **Restock alerts**: Notify users when out-of-stock items are back
-- **Recommendation refresh**: Re-rank personalised feed based on new data
+> _Screenshots coming soon — run the app locally to see the full experience._
 
-Future implementation: Next.js Cron (Vercel), BullMQ + Redis, or a separate Python microservice.
-
----
-
-## ⚠️ Demo Limitations
-
-- **Authentication**: Uses in-memory user store (resets on server restart). For production, use Prisma + PostgreSQL.
-- **Wardrobe**: In-memory store per request lifecycle. For production, use a real database.
-- **AI Stylist**: Keyword-matching rules. For production, integrate OpenAI GPT-4o.
-- **Body Scan**: Rule-based measurement analysis. For production, use computer vision / pose estimation.
-- **Virtual Try-On**: CSS overlay simulation. For production, use WebXR + body pose estimation.
-- **Reverse Search**: Returns shuffled mock data. For production, use image embedding similarity search.
-- **Passwords**: Stored in plain text in demo (never acceptable in production — use bcrypt/argon2).
+| Page | Description |
+|---|---|
+| Landing Page | Hero with features, testimonials, and CTA |
+| Dashboard | Personalised feed with recommendations |
+| Shop | Product grid with AI-powered filtering |
+| Body Scan | Upload photo + measurement extraction UI |
+| Virtual Try-On | Product overlaid on user body |
+| AI Stylist | Chat interface with outfit suggestions |
+| Smart Wardrobe | Categorised clothing organiser |
+| Onboarding | 5-step style + body setup flow |
 
 ---
 
-## 📄 License
+## 📄 Licence
 
-MIT
+MIT © TryVerse 2024

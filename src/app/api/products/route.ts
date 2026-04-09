@@ -1,43 +1,49 @@
-import { NextRequest, NextResponse } from "next/server";
-import { mockProducts } from "@/data/products";
-import type { FilterOptions } from "@/types/product";
+import { NextRequest, NextResponse } from 'next/server'
+import { products } from '@/data/products'
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
+  try {
+    const { searchParams } = new URL(req.url)
+    const category = searchParams.get('category')
+    const q = searchParams.get('q')?.toLowerCase()
+    const minPrice = searchParams.get('minPrice')
+    const maxPrice = searchParams.get('maxPrice')
+    const occasion = searchParams.get('occasion')
+    const bodyShape = searchParams.get('bodyShape')
+    const trending = searchParams.get('trending')
+    const isNew = searchParams.get('new')
 
-  const filters: FilterOptions = {
-    category: searchParams.get("category") as FilterOptions["category"] ?? undefined,
-    minPrice: searchParams.has("minPrice") ? Number(searchParams.get("minPrice")) : undefined,
-    maxPrice: searchParams.has("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined,
-    occasion: searchParams.get("occasion") as FilterOptions["occasion"] ?? undefined,
-    weather: searchParams.get("weather") as FilterOptions["weather"] ?? undefined,
-    bodyShape: searchParams.get("bodyShape") as FilterOptions["bodyShape"] ?? undefined,
-    size: searchParams.get("size") ?? undefined,
-  };
+    let result = [...products]
 
-  let results = [...mockProducts];
+    if (category && category !== 'all') {
+      result = result.filter(p => p.category === category)
+    }
+    if (q) {
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)
+      )
+    }
+    if (minPrice) {
+      result = result.filter(p => p.price >= parseFloat(minPrice))
+    }
+    if (maxPrice) {
+      result = result.filter(p => p.price <= parseFloat(maxPrice))
+    }
+    if (occasion) {
+      result = result.filter(p => p.occasions?.includes(occasion))
+    }
+    if (bodyShape) {
+      result = result.filter(p => p.bodyShapeCompatibility?.includes(bodyShape))
+    }
+    if (trending === 'true') {
+      result = result.filter(p => p.isTrending)
+    }
+    if (isNew === 'true') {
+      result = result.filter(p => p.isNew)
+    }
 
-  if (filters.category) {
-    results = results.filter((p) => p.category === filters.category);
+    return NextResponse.json({ data: result, total: result.length })
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
   }
-  if (filters.minPrice !== undefined) {
-    results = results.filter((p) => p.price >= filters.minPrice!);
-  }
-  if (filters.maxPrice !== undefined) {
-    results = results.filter((p) => p.price <= filters.maxPrice!);
-  }
-  if (filters.occasion) {
-    results = results.filter((p) => p.occasions.includes(filters.occasion!));
-  }
-  if (filters.weather) {
-    results = results.filter((p) => p.weatherSuitability.includes(filters.weather!));
-  }
-  if (filters.bodyShape) {
-    results = results.filter((p) => p.bodyShapes.includes(filters.bodyShape!));
-  }
-  if (filters.size) {
-    results = results.filter((p) => p.sizes.includes(filters.size!));
-  }
-
-  return NextResponse.json({ products: results, total: results.length });
 }

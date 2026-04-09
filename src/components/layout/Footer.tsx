@@ -1,95 +1,48 @@
-import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-100 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 font-black text-xl">
-              <Sparkles className="h-5 w-5 text-indigo-600" />
-              <span className="bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
-                TryVerse
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-gray-500">
-              Try Before You Buy. From Every Angle.
+    <footer className="bg-charcoal-900 text-cream-200 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 className="font-serif text-xl text-cream-100 mb-4">TryVerse</h3>
+            <p className="text-sm text-charcoal-400 leading-relaxed">
+              Your AI-powered personal stylist. Discover fashion that fits your body, lifestyle, and budget.
             </p>
           </div>
-
-          {/* Product */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Product
-            </h3>
-            <ul className="mt-3 space-y-2">
-              {[
-                { href: "/feed", label: "Shopping Feed" },
-                { href: "/body-scan", label: "Body Scan" },
-                { href: "/try-on", label: "Virtual Try-On" },
-                { href: "/stylist", label: "AI Stylist" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="font-medium text-cream-100 mb-4">Discover</h4>
+            <ul className="space-y-2 text-sm text-charcoal-400">
+              <li><Link href="/discover" className="hover:text-cream-100 transition-colors">New Arrivals</Link></li>
+              <li><Link href="/trending" className="hover:text-cream-100 transition-colors">Trending</Link></li>
+              <li><Link href="/occasions" className="hover:text-cream-100 transition-colors">By Occasion</Link></li>
+              <li><Link href="/brands" className="hover:text-cream-100 transition-colors">Brands</Link></li>
             </ul>
           </div>
-
-          {/* Tools */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Tools
-            </h3>
-            <ul className="mt-3 space-y-2">
-              {[
-                { href: "/wardrobe", label: "My Wardrobe" },
-                { href: "/reverse-search", label: "Reverse Search" },
-                { href: "/dashboard", label: "Dashboard" },
-                { href: "/profile", label: "Profile" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="font-medium text-cream-100 mb-4">My Style</h4>
+            <ul className="space-y-2 text-sm text-charcoal-400">
+              <li><Link href="/wardrobe" className="hover:text-cream-100 transition-colors">My Wardrobe</Link></li>
+              <li><Link href="/stylist" className="hover:text-cream-100 transition-colors">AI Stylist</Link></li>
+              <li><Link href="/profile" className="hover:text-cream-100 transition-colors">Style Profile</Link></li>
+              <li><Link href="/wishlist" className="hover:text-cream-100 transition-colors">Wishlist</Link></li>
             </ul>
           </div>
-
-          {/* Company */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Company
-            </h3>
-            <ul className="mt-3 space-y-2">
-              {["About", "Blog", "Careers", "Privacy Policy", "Terms"].map(
-                (item) => (
-                  <li key={item}>
-                    <span className="cursor-pointer text-sm text-gray-600 hover:text-indigo-600 transition-colors">
-                      {item}
-                    </span>
-                  </li>
-                )
-              )}
+            <h4 className="font-medium text-cream-100 mb-4">Support</h4>
+            <ul className="space-y-2 text-sm text-charcoal-400">
+              <li><Link href="/about" className="hover:text-cream-100 transition-colors">About</Link></li>
+              <li><Link href="/privacy" className="hover:text-cream-100 transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-cream-100 transition-colors">Terms of Service</Link></li>
+              <li><Link href="/contact" className="hover:text-cream-100 transition-colors">Contact</Link></li>
             </ul>
           </div>
         </div>
-
-        <div className="mt-10 border-t border-gray-200 pt-6 text-center text-xs text-gray-400">
-          © {new Date().getFullYear()} TryVerse. All rights reserved.
+        <div className="border-t border-charcoal-800 mt-8 pt-8 text-center text-sm text-charcoal-500">
+          <p>© {new Date().getFullYear()} TryVerse. All rights reserved.</p>
         </div>
       </div>
     </footer>
-  );
+  )
 }
