@@ -350,7 +350,7 @@ export default function LandingPage() {
                 <div className="flex items-center gap-1 text-[#C9A84C] mb-5">
                   {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
                 </div>
-                <p className="text-[#F5F0E8]/70 text-sm leading-relaxed mb-6">"{t.quote}"</p>
+                <p className="text-[#F5F0E8]/70 text-sm leading-relaxed mb-6">&quot;{t.quote}&quot;</p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9A84C]/60 to-[#8040C0]/60 flex items-center justify-center text-sm font-semibold">
                     {t.initials}
@@ -386,7 +386,7 @@ export default function LandingPage() {
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#F5F0E8]/50 mb-10 text-lg">
             Join 50,000+ people who have transformed the way they dress.
-            It's free to get started.
+            It&apos;s free to get started.
           </motion.p>
           <motion.div variants={fadeUp}>
             <Link

@@ -109,7 +109,7 @@ export default function WardrobePage() {
                   {activeTab === 'tryLater' && 'Nothing saved for later'}
                 </h3>
                 <p className="text-white/30 text-sm mb-6 max-w-xs mx-auto">
-                  Browse the shop and save items you love — they'll appear here.
+                  Browse the shop and save items you love — they&apos;ll appear here.
                 </p>
                 <button
                   onClick={() => router.push('/shop')}

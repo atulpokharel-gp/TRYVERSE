@@ -1,5 +1,7 @@
 import { Product } from '@/types'
 
+export { mockProducts } from './mockProducts'
+
 export const products: Product[] = [
   // ── DRESSES ──
   {

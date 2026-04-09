@@ -54,6 +54,7 @@ export default function StylistPage() {
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return
+    // eslint-disable-next-line react-hooks/purity
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: text }
     setMessages(prev => [...prev, userMsg])
     setInput('')
@@ -62,6 +63,7 @@ export default function StylistPage() {
     await new Promise(res => setTimeout(res, 1200 + Math.random() * 800))
 
     const aiMsg: Message = {
+      // eslint-disable-next-line react-hooks/purity
       id: (Date.now() + 1).toString(),
       role: 'assistant',
       content: getResponse(text),
