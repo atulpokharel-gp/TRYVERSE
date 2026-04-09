@@ -18,13 +18,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'avatars.githubusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
     ],
   },
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-    },
-  },
+  // serverActions is stable in Next.js 15 — no longer needs experimental flag
+  serverExternalPackages: ['bcryptjs'],
 }
 
 module.exports = nextConfig
