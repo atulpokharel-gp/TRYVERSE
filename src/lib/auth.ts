@@ -1,12 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error(
-    "Missing NEXTAUTH_SECRET environment variable. Set it in .env.local before running the app."
-  );
-}
-
 /**
  * In-memory user store for MVP/demo purposes.
  *
