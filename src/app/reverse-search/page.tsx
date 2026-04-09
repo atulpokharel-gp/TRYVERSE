@@ -16,7 +16,7 @@ const sourceColors: Record<string, string> = {
   Temu: "bg-orange-400 text-white",
   ASOS: "bg-gray-900 text-white",
   Mango: "bg-pink-600 text-white",
-  "Ralph Lauren": "bg-navy-800 bg-indigo-900 text-white",
+  "Ralph Lauren": "bg-indigo-900 text-white",
 };
 
 interface SearchResult {

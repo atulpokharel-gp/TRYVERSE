@@ -40,7 +40,7 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-black text-gray-900">
           Good morning, {name.split(" ")[0]} 👋
         </h1>
-        <p className="mt-1 text-gray-500">Here&apos;s your personalised fashion dashboard.</p>
+        <p className="mt-1 text-gray-500">Here&apos;s your personalized fashion dashboard.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
