@@ -14,22 +14,22 @@ const ALLOWED_ORIGINS = [
 ].filter(Boolean) as string[]
 
 function getCorsHeaders(origin: string | null) {
-  // Allow any origin for mobile API routes (native apps don't send Origin)
-  // For web API routes, validate against allowed origins
   const headers: Record<string, string> = {
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-    'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Max-Age': '86400',
   }
 
   if (!origin) {
-    // No origin = likely a native mobile app or server-to-server call
+    // No origin = likely a native mobile app or server-to-server call.
+    // Use wildcard without credentials.
     headers['Access-Control-Allow-Origin'] = '*'
   } else if (ALLOWED_ORIGINS.includes(origin)) {
+    // Known origin — allow with credentials support.
     headers['Access-Control-Allow-Origin'] = origin
+    headers['Access-Control-Allow-Credentials'] = 'true'
   } else {
-    // For mobile API routes, allow any origin
+    // Unknown origin — allow without credentials.
     headers['Access-Control-Allow-Origin'] = origin
   }
 

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { randomBytes } from 'crypto'
 import { prisma } from './db'
 
 /**
@@ -10,15 +11,10 @@ import { prisma } from './db'
  */
 
 /**
- * Generate a random token string.
+ * Generate a cryptographically secure random token string.
  */
 export function generateToken(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let token = ''
-  for (let i = 0; i < 64; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return token
+  return randomBytes(48).toString('base64url')
 }
 
 /**

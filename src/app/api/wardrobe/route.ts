@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { authenticateMobileRequest } from '@/lib/mobile-auth'
+import { Prisma } from '@prisma/client'
 
 /**
  * Resolve the current user from either a NextAuth session (web) or
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const category = searchParams.get('category')
 
-    const where: Record<string, unknown> = { userId: user.id }
+    const where: Prisma.WardrobeItemWhereInput = { userId: user.id }
     if (category) {
       where.category = category
     }
@@ -102,7 +103,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'productId is required' }, { status: 400 })
     }
 
-    const where: Record<string, unknown> = { userId: user.id, productId }
+    const where: Prisma.WardrobeItemWhereInput = { userId: user.id, productId }
     if (category) {
       where.category = category
     }
