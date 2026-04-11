@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Sparkles, Activity, Clock, CheckCircle, AlertCircle, RefreshCw, TrendingUp, Tag, Star, Package } from 'lucide-react'
+import { Sparkles, Activity, Clock, CheckCircle, AlertCircle, RefreshCw, TrendingUp, Tag, Star, Package, Globe } from 'lucide-react'
 
 const jobs = [
   {
@@ -88,20 +88,29 @@ export default function AdminPage() {
       {/* Nav */}
       <nav className="border-b border-white/5 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="flex items-center gap-2 text-[#C9A84C]">
+          <Link href="/admin" className="flex items-center gap-2 text-[#C9A84C]">
             <Sparkles className="w-5 h-5" />
             <span className="font-serif text-lg">TryVerse</span>
           </Link>
           <span className="text-white/20">/</span>
           <span className="text-white/60 text-sm">Admin</span>
         </div>
-        <button
-          onClick={handleRefresh}
-          className="flex items-center gap-2 text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/scraping"
+            className="flex items-center gap-2 text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
+          >
+            <Globe className="w-4 h-4" />
+            Web Scraping
+          </Link>
+          <button
+            onClick={handleRefresh}
+            className="flex items-center gap-2 text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </div>
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-10">
