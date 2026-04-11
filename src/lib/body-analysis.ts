@@ -62,12 +62,12 @@ export function analyzeBody(measurements: SizeProfile): BodyAnalysisResult {
     else sizeCategory = "XL";
   }
 
-  const fitSuggestions = getFitSuggestions(shape, sizeCategory);
+  const fitSuggestions = getFitSuggestions(shape);
 
   return { shape, sizeCategory, fitSuggestions, avatarType };
 }
 
-function getFitSuggestions(shape: string, _size: string): string[] {
+function getFitSuggestions(shape: string): string[] {
   const suggestions: Record<string, string[]> = {
     hourglass: [
       "Wrap dresses and fitted silhouettes flatter your balanced proportions",

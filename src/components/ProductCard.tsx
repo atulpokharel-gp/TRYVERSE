@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Heart, Zap, Search, Star } from 'lucide-react'
 import { Product } from '@/types'
@@ -45,10 +46,12 @@ export default function ProductCard({ product, onTryOn, onSave, onFindSimilar, i
     >
       {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden bg-white/5">
-        <img
+        <Image
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(max-width: 768px) 50vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
         {/* Discount badge */}
