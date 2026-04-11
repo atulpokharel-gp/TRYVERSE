@@ -114,6 +114,17 @@ export default function AdminPage() {
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-10">
+        {/* Quick Links */}
+        <div className="flex gap-3">
+          <Link
+            href="/admin/brands"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-[#C9A84C]/10 border border-[#C9A84C]/30 rounded-xl text-[#C9A84C] hover:bg-[#C9A84C]/20 transition-colors"
+          >
+            <Globe className="w-4 h-4" />
+            Phia Brand Collection
+          </Link>
+        </div>
+
         <div>
           <h1 className="text-3xl font-serif mb-1">Background Jobs</h1>
           <p className="text-[#F5F0E8]/50 text-sm">Architecture overview and nightly operation status.</p>
