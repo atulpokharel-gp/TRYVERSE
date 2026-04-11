@@ -116,6 +116,82 @@ model MobileToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// ── Phia Brand Models ──
+
+model PhiaBrand {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  logoUrl       String?
+  description   String?
+  websiteUrl    String?
+  category      String?
+  sourceUrl     String
+  productCount  Int      @default(0)
+  firstSeenAt   DateTime @default(now())
+  lastScrapedAt DateTime?
+
+  products      PhiaBrandProduct[]
+
+  @@index([category])
+}
+
+model PhiaBrandProduct {
+  id            String   @id @default(cuid())
+  brandId       String
+  externalId    String?
+  name          String
+  price         Float?
+  originalPrice Float?
+  currency      String   @default("USD")
+  imageUrl      String?
+  productUrl    String?
+  category      String?
+  description   String?
+  sizes         String?
+  colors        String?
+  inStock       Boolean  @default(true)
+  sourceUrl     String?
+  lastSeenAt    DateTime @default(now())
+
+  brand         PhiaBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+  @@index([category])
+}
+
+model BrandScrapeJob {
+  id             String    @id @default(cuid())
+  jobType        String    @default("full")
+  targetUrl      String?
+  status         String    @default("pending")
+  brandsFound    Int       @default(0)
+  productsFound  Int       @default(0)
+  pagesScraped   Int       @default(0)
+  errorCount     Int       @default(0)
+  errorMessage   String?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  logs           BrandScrapeLog[]
+
+  @@index([status])
+}
+
+model BrandScrapeLog {
+  id        String   @id @default(cuid())
+  jobId     String
+  level     String
+  message   String
+  url       String?
+  createdAt DateTime @default(now())
+
+  job       BrandScrapeJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+}
+
 // ── Web Scraping Models ──
 
 model ScrapeSite {
