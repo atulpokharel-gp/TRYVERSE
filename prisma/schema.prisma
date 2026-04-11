@@ -116,76 +116,56 @@ model MobileToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ── Phia Brand Scraping ──
+// ── Web Scraping Models ──
 
-model PhiaBrand {
-  id            String    @id @default(cuid())
-  slug          String    @unique          // URL slug, e.g. "nike"
-  name          String                     // Display name, e.g. "Nike"
-  logoUrl       String?                    // Brand logo image URL
-  description   String?                    // Brand description text
-  websiteUrl    String?                    // Brand's own website
-  category      String?                    // Category on Phia (e.g. "Luxury", "Streetwear")
-  productCount  Int       @default(0)      // Number of products discovered
-  sourceUrl     String                     // The Phia page this was scraped from
-  firstSeenAt   DateTime  @default(now())  // When we first discovered this brand
-  lastScrapedAt DateTime?                  // When we last scraped the detail page
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+model ScrapeSite {
+  id          String   @id @default(cuid())
+  name        String
+  url         String
+  brand       String
+  category    String   @default("all")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  products      PhiaBrandProduct[]
+  scrapeJobs  ScrapeJob[]
+  scrapedProducts ScrapedProduct[]
 }
 
-model PhiaBrandProduct {
-  id            String    @id @default(cuid())
-  brandId       String
-  externalId    String?                    // ID from Phia if available
+model ScrapedProduct {
+  id            String   @id @default(cuid())
   name          String
-  price         Float?
-  originalPrice Float?
-  currency      String    @default("USD")
-  imageUrl      String?
-  productUrl    String?                    // Link to product on Phia
-  category      String?
+  brand         String
+  category      String
+  url           String
+  price         Float
+  currency      String   @default("USD")
+  imageUrl      String
   description   String?
-  sizes         String?                    // JSON array stored as string
-  colors        String?                    // JSON array stored as string
-  inStock       Boolean   @default(true)
-  sourceUrl     String                     // The page this was scraped from
-  firstSeenAt   DateTime  @default(now())
-  lastSeenAt    DateTime  @default(now())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  siteId        String
+  scrapedAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  brand         PhiaBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  site          ScrapeSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
-  @@unique([brandId, name, productUrl])
+  @@unique([url, siteId])
+  @@index([brand])
+  @@index([category])
+  @@index([siteId])
 }
 
-model BrandScrapeJob {
-  id            String    @id @default(cuid())
-  status        String    @default("pending") // pending | running | completed | failed
-  jobType       String    @default("full")    // full | incremental | detail
-  targetUrl     String?                       // Specific URL to scrape, null = all
-  brandsFound   Int       @default(0)
-  productsFound Int       @default(0)
-  pagesScraped  Int       @default(0)
-  errorCount    Int       @default(0)
-  errorMessage  String?
+model ScrapeJob {
+  id            String   @id @default(cuid())
+  siteId        String
+  status        String   @default("pending")  // pending | running | completed | failed
+  productsFound Int      @default(0)
+  error         String?
   startedAt     DateTime?
   completedAt   DateTime?
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime @default(now())
 
-  logs          BrandScrapeLog[]
-}
+  site          ScrapeSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
-model BrandScrapeLog {
-  id        String   @id @default(cuid())
-  jobId     String
-  level     String   @default("info")      // info | warn | error | success
-  message   String
-  url       String?
-  createdAt DateTime @default(now())
-
-  job       BrandScrapeJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  @@index([siteId])
+  @@index([status])
 }
