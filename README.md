@@ -138,7 +138,19 @@ src/
 │       ├── products/       # Product endpoints
 │       ├── wardrobe/       # Wardrobe CRUD
 │       ├── body-profile/   # Body data endpoints
-│       └── chat/           # AI stylist chat API
+│       ├── chat/           # AI stylist chat API
+│       ├── health/         # Health check endpoint
+│       └── mobile/         # Mobile API (token-based auth)
+│           ├── auth/       # Mobile login/register/logout
+│           ├── profile/    # User profile CRUD
+│           ├── products/   # Product browse + filter (paginated)
+│           ├── wardrobe/   # Wardrobe CRUD
+│           ├── body-profile/ # Body measurements
+│           ├── body-scan/  # Body scan analysis
+│           ├── chat/       # AI fashion chat
+│           ├── stylist/    # AI stylist + product recs
+│           ├── weather/    # Weather-based suggestions
+│           └── reverse-search/ # Reverse image search
 ├── components/             # Reusable UI components
 │   ├── layout/             # Header, Footer
 │   ├── ui/                 # Button, Card, Input, Badge...
@@ -146,7 +158,8 @@ src/
 │   └── ProductCard.tsx     # Product display card
 ├── lib/
 │   ├── auth.ts             # NextAuth config
-│   └── db.ts               # Prisma client singleton
+│   ├── db.ts               # Prisma client singleton
+│   └── mobile-auth.ts      # Mobile token auth utilities
 ├── data/
 │   ├── products.ts         # Mock product data
 │   └── mockProducts.ts     # Extended mock data
@@ -155,9 +168,114 @@ src/
     └── next-auth.d.ts      # NextAuth type extensions
 
 prisma/
-├── schema.prisma           # Database schema
+├── schema.prisma           # Database schema (includes MobileToken model)
 └── seed.ts                 # Database seed script
 ```
+
+---
+
+## 📱 Mobile API
+
+TryVerse provides a full REST API under `/api/mobile/` designed for native mobile apps (React Native, Flutter, Swift, Kotlin, etc.). All mobile endpoints use **Bearer token** authentication instead of browser cookies.
+
+### Authentication Flow
+
+```
+1. POST /api/mobile/auth          — Login (returns Bearer token)
+   Body: { "email": "...", "password": "..." }
+
+2. POST /api/mobile/auth          — Register
+   Body: { "email": "...", "password": "...", "action": "register" }
+
+3. DELETE /api/mobile/auth         — Logout (revokes token)
+   Header: Authorization: Bearer <token>
+```
+
+### Mobile Endpoints
+
+All authenticated endpoints require the header: `Authorization: Bearer <token>`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/mobile/auth` | No | Login or register |
+| DELETE | `/api/mobile/auth` | Yes | Logout (revoke token) |
+| GET | `/api/mobile/profile` | Yes | Get user profile |
+| PUT | `/api/mobile/profile` | Yes | Update user profile |
+| GET | `/api/mobile/products?category=&q=&page=&limit=` | No | Browse products (paginated) |
+| GET | `/api/mobile/wardrobe?category=` | Yes | Get wardrobe items |
+| POST | `/api/mobile/wardrobe` | Yes | Add item to wardrobe |
+| DELETE | `/api/mobile/wardrobe?productId=&category=` | Yes | Remove wardrobe item |
+| GET | `/api/mobile/body-profile` | Yes | Get body measurements |
+| POST | `/api/mobile/body-profile` | Yes | Save body measurements |
+| POST | `/api/mobile/body-scan` | No | Analyze body measurements |
+| POST | `/api/mobile/chat` | No | AI fashion chat |
+| POST | `/api/mobile/stylist` | No | AI stylist + product recommendations |
+| GET | `/api/mobile/weather?city=` | No | Weather + outfit suggestion |
+| POST | `/api/mobile/reverse-search` | No | Reverse image search |
+| GET | `/api/health` | No | Health check / uptime monitoring |
+
+### Example: Mobile Login (cURL)
+
+```bash
+curl -X POST https://your-domain.com/api/mobile/auth \
+  -H "Content-Type: application/json" \
+  -d '{"email": "alex@tryverse.com", "password": "password123"}'
+```
+
+Response:
+```json
+{
+  "token": "aBcDeFgH...",
+  "expiresAt": "2025-02-14T00:00:00.000Z",
+  "user": { "id": "...", "email": "alex@tryverse.com", "name": "Alex" }
+}
+```
+
+### CORS
+
+All `/api/*` routes include CORS headers so mobile apps and external frontends can access the API from any origin. The middleware automatically handles `OPTIONS` preflight requests.
+
+---
+
+## 🚀 Deployment (Vercel)
+
+TryVerse is configured for one-click deployment on [Vercel](https://vercel.com).
+
+### 1. Connect your repo to Vercel
+
+Import the repository from your Vercel dashboard.
+
+### 2. Set environment variables
+
+In the Vercel project settings, add:
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | Your PostgreSQL connection string (e.g. from [Supabase](https://supabase.com), [Neon](https://neon.tech), [Railway](https://railway.app)) |
+| `NEXTAUTH_URL` | Your production URL (e.g. `https://tryverse.vercel.app`) |
+| `NEXTAUTH_SECRET` | Generate with `openssl rand -base64 32` |
+
+### 3. Switch to PostgreSQL (production)
+
+Update `prisma/schema.prisma` datasource for production:
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+### 4. Deploy
+
+Vercel will automatically:
+- Run `npx prisma generate` (via build command in `vercel.json`)
+- Build the Next.js app
+- Serve the app with all API routes live
+
+### Health Check
+
+Monitor your deployment at `GET /api/health` — returns server status, database connectivity, and uptime.
 
 ---
 
