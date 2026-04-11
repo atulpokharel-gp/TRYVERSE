@@ -1,0 +1,145 @@
+# ============================================================================
+# TRYVERSE — robots.txt (Development Reference)
+# ============================================================================
+# This file documents every page route and API endpoint in the application.
+# It also serves as the standard robots.txt for web crawlers.
+# ============================================================================
+
+User-agent: *
+Allow: /
+
+# ============================================================================
+# PAGE ROUTES
+# ============================================================================
+#
+# /                          — Landing / home page
+# /auth/login                — User login
+# /auth/signin               — User sign-in (NextAuth)
+# /auth/signup               — User registration
+# /onboarding                — New-user onboarding flow
+# /dashboard                 — Main dashboard (authenticated)
+# /feed                      — Fashion feed
+# /search                    — Product search
+# /shop                      — Shopping page
+# /wardrobe                  — Virtual wardrobe (authenticated)
+# /try-on                    — Virtual try-on experience
+# /body-scan                 — Body measurement scanner
+# /profile                   — User profile (authenticated)
+# /stylist                   — AI stylist chat
+# /reverse-search            — Reverse image search
+# /admin                     — Admin dashboard
+# /admin/scraping            — Admin scraping management
+# /admin/brands              — Admin brand management
+
+# ============================================================================
+# AUTH API
+# ============================================================================
+#
+# POST   /api/auth/register         — Register a new user (name, email, password min 6 chars). Returns userId.
+# POST   /api/auth/signup           — Extended signup (name, email, password min 8 chars, gender, stylePreferences, budgetMax).
+# GET    /api/auth/[...nextauth]    — NextAuth session/callback handler.
+# POST   /api/auth/[...nextauth]    — NextAuth login/signout handler.
+
+# ============================================================================
+# PRODUCTS & SEARCH API
+# ============================================================================
+#
+# GET    /api/products              — Browse/filter products by category, search, price range, occasion, body shape, trending, new. Supports pagination (page, limit).
+# POST   /api/reverse-search       — Reverse image search. Body: { imageUrl } or { query }. Returns matched products with similarity scores.
+
+# ============================================================================
+# WARDROBE API (Auth Required — NextAuth session or Bearer token)
+# ============================================================================
+#
+# GET    /api/wardrobe              — Get wardrobe items. Query: ?category= (optional filter).
+# POST   /api/wardrobe              — Add item. Body: { productId, category }.
+# DELETE /api/wardrobe              — Remove item. Query: ?productId=&category=.
+
+# ============================================================================
+# BODY PROFILE & SCAN API
+# ============================================================================
+#
+# POST   /api/body-scan             — Analyze body measurements. Body: { measurements }. Returns analysis with recommendations.
+# GET    /api/body-profile          — Get user body profile (Auth Required — NextAuth session or Bearer token).
+# POST   /api/body-profile          — Create/update body profile with measurements (Auth Required). Auto-calculates body shape and size.
+
+# ============================================================================
+# STYLIST & CHAT API
+# ============================================================================
+#
+# POST   /api/chat                  — AI fashion stylist chat. Body: { message }. Returns keyword-matched styling advice.
+# POST   /api/stylist/chat          — Advanced AI stylist with product recommendations. Body: { message }. Returns content + recommended products.
+
+# ============================================================================
+# WEATHER API
+# ============================================================================
+#
+# GET    /api/weather               — Weather-based fashion suggestions. Query: ?city=. Returns weather data and outfit recommendations.
+
+# ============================================================================
+# BRANDS API
+# ============================================================================
+#
+# GET    /api/brands                — List Phia brands. Query: ?q=&category=&page=&limit=. Returns brands with product counts.
+# GET    /api/brands/:slug          — Get single brand by slug with associated products (up to 100).
+# POST   /api/brands/scrape         — Trigger brand scrape job. Body: { jobType: full|incremental|detail, targetUrl? }. Prevents concurrent jobs.
+# GET    /api/brands/scrape         — Get scrape job status. Query: ?jobId= (optional).
+
+# ============================================================================
+# ADMIN API
+# ============================================================================
+#
+# GET    /api/admin/sites           — List all scrape sites.
+# POST   /api/admin/sites           — Create scrape site. Body: { name, url, brand }.
+# PATCH  /api/admin/sites           — Update scrape site. Body: { id, ...fields }.
+# DELETE /api/admin/sites           — Delete scrape site. Body: { id }.
+# POST   /api/admin/scrape          — Trigger scraping. Body: { siteId } or { all: true }.
+# GET    /api/admin/scraped-products — List scraped products. Query: ?brand=&category=&siteId=&page=&limit=.
+
+# ============================================================================
+# CRON API (Auth Required — CRON_SECRET Bearer token)
+# ============================================================================
+#
+# GET    /api/cron/scrape            — Run scheduled scrape of all active sites. Returns job summary.
+# GET    /api/cron/scrape-brands     — Health check for brand scrape cron.
+# POST   /api/cron/scrape-brands     — Trigger incremental brand scrape. Returns jobId.
+
+# ============================================================================
+# HEALTH API
+# ============================================================================
+#
+# GET    /api/health                 — Health check. Returns status, database connectivity, timestamp, version, uptime. 503 if DB down.
+
+# ============================================================================
+# MOBILE API
+# ============================================================================
+#
+# --- Mobile Auth ---
+# POST   /api/mobile/auth           — Login or register. Body: { action: login|register, email, password, name? }. Returns Bearer token on login.
+# DELETE /api/mobile/auth           — Logout (revoke token). Auth Required (Bearer token).
+#
+# --- Mobile Products & Search ---
+# GET    /api/mobile/products       — Browse/filter products. Query: ?category=&search=&minPrice=&maxPrice=&occasion=&bodyShape=&trending=&new=&page=&limit=.
+# POST   /api/mobile/reverse-search — Reverse image search. Body: { imageUrl } or { query }. Returns products with similarity scores.
+#
+# --- Mobile Wardrobe (Auth Required — Bearer token) ---
+# GET    /api/mobile/wardrobe       — Get wardrobe items. Query: ?category= (optional).
+# POST   /api/mobile/wardrobe       — Add item. Body: { productId, category }.
+# DELETE /api/mobile/wardrobe       — Remove item. Query: ?productId=&category=.
+#
+# --- Mobile Body Profile & Scan ---
+# POST   /api/mobile/body-scan      — Analyze body measurements. Body: { measurements }. Returns analysis.
+# GET    /api/mobile/body-profile   — Get body profile (Auth Required — Bearer token).
+# POST   /api/mobile/body-profile   — Create/update body profile (Auth Required — Bearer token). Body: { height, weight, chest, waist, hips, shoulders }.
+#
+# --- Mobile Stylist & Chat ---
+# POST   /api/mobile/stylist        — AI stylist with product recommendations. Body: { message }. Returns content + products.
+# POST   /api/mobile/chat           — Fashion stylist chat. Body: { message }. Returns keyword-matched styling advice.
+#
+# --- Mobile Weather ---
+# GET    /api/mobile/weather        — Weather-based fashion suggestions. Query: ?city=.
+
+# ============================================================================
+# Sitemap
+# ============================================================================
+Sitemap: https://tryverse.app/sitemap.xml
