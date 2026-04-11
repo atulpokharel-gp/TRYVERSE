@@ -148,6 +148,7 @@ model ScrapedProduct {
 
   site          ScrapeSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
+  @@unique([url, siteId])
   @@index([brand])
   @@index([category])
   @@index([siteId])

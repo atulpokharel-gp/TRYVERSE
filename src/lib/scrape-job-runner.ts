@@ -21,12 +21,12 @@ export async function runScrapeForSite(siteId: string) {
   try {
     const products = await scrapeSite(site.url, site.brand, site.category)
 
-    // Upsert scraped products (match on url + siteId)
+    // Upsert scraped products using compound unique constraint (url + siteId)
     let count = 0
     for (const p of products) {
       await prisma.scrapedProduct.upsert({
         where: {
-          id: await findExistingProductId(p.url, site.id),
+          url_siteId: { url: p.url, siteId: site.id },
         },
         create: {
           name: p.name,
@@ -74,18 +74,6 @@ export async function runScrapeForSite(siteId: string) {
     })
     throw error
   }
-}
-
-/**
- * Find existing product by URL+siteId, return its ID or a placeholder for create.
- */
-async function findExistingProductId(url: string, siteId: string): Promise<string> {
-  const existing = await prisma.scrapedProduct.findFirst({
-    where: { url, siteId },
-    select: { id: true },
-  })
-  // Return existing id or a non-existent id so upsert falls through to create
-  return existing?.id ?? 'non-existent-id'
 }
 
 /**

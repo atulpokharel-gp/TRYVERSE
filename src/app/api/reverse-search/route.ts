@@ -49,7 +49,9 @@ export async function POST(req: NextRequest) {
  * Search scraped products by matching query against name, brand, and category.
  */
 async function searchScrapedProducts(query: string) {
-  if (!query || query === "fashion") return [];
+  // Skip generic/empty queries that wouldn't yield meaningful results
+  const IGNORED_SEARCH_TERMS = ['fashion', '']
+  if (!query || IGNORED_SEARCH_TERMS.includes(query.toLowerCase())) return [];
 
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
 
