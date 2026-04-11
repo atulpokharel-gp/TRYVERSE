@@ -156,12 +156,12 @@ async function runScrapeJob(
                   productCount: products.length,
                 },
               })
-            }
 
-            // Persist products
-            for (const product of products) {
-              await upsertProduct(slug!, product)
-              result.productsFound++
+              // Persist products
+              for (const product of products) {
+                await upsertProduct(slug, product)
+                result.productsFound++
+              }
             }
 
             await log('info', `Scraped ${detailUrl}: ${products.length} products`, detailUrl)

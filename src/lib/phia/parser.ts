@@ -224,7 +224,8 @@ function extractPrices(text: string): { current: number | null; original: number
   const numbers = text.match(/[\d,]+\.?\d*/g)?.map((n) => parseFloat(n.replace(/,/g, ''))) ?? []
   if (numbers.length === 0) return { current: null, original: null }
   if (numbers.length === 1) return { current: numbers[0], original: null }
-  // Typically: original (larger) first, sale price second, or vice versa
+  // When two prices are present, the smaller is assumed to be the current
+  // (sale) price and the larger is the original (strikethrough) price.
   const sorted = [...numbers].sort((a, b) => a - b)
   return { current: sorted[0], original: sorted[sorted.length - 1] !== sorted[0] ? sorted[sorted.length - 1] : null }
 }

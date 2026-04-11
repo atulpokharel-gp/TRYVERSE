@@ -45,7 +45,7 @@ export async function fetchWithRetry(
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err))
       if (attempt < config.maxRetries) {
-        // Exponential backoff: 2s, 4s, 8s ...
+        // Exponential backoff: delay doubles each attempt
         await sleep(2000 * Math.pow(2, attempt - 1))
       }
     }
