@@ -314,6 +314,67 @@ async function main() {
   })
 
   console.log('✅ Created wardrobe items')
+
+  // Seed scraping sites (Gucci, Prada, Temu, Amazon)
+  await prisma.scrapeSite.deleteMany()
+
+  const scrapeSites = [
+    {
+      name: 'Gucci Women Handbags',
+      url: 'https://www.gucci.com/us/en/ca/women/handbags-c-women-handbags',
+      brand: 'Gucci',
+      category: 'bags',
+    },
+    {
+      name: 'Gucci Women Ready to Wear',
+      url: 'https://www.gucci.com/us/en/ca/women/ready-to-wear-c-women-readytowear',
+      brand: 'Gucci',
+      category: 'dresses',
+    },
+    {
+      name: 'Prada Women Bags',
+      url: 'https://www.prada.com/us/en/women/bags.html',
+      brand: 'Prada',
+      category: 'bags',
+    },
+    {
+      name: 'Prada Women Ready to Wear',
+      url: 'https://www.prada.com/us/en/women/ready_to_wear.html',
+      brand: 'Prada',
+      category: 'dresses',
+    },
+    {
+      name: 'Amazon Women Fashion',
+      url: 'https://www.amazon.com/s?k=women+fashion+clothing',
+      brand: 'Amazon',
+      category: 'all',
+    },
+    {
+      name: 'Amazon Women Dresses',
+      url: 'https://www.amazon.com/s?k=women+dresses',
+      brand: 'Amazon',
+      category: 'dresses',
+    },
+    {
+      name: 'Temu Women Clothing',
+      url: 'https://www.temu.com/search_result.html?search_key=women+clothing',
+      brand: 'Temu',
+      category: 'all',
+    },
+    {
+      name: 'Temu Women Dresses',
+      url: 'https://www.temu.com/search_result.html?search_key=women+dresses',
+      brand: 'Temu',
+      category: 'dresses',
+    },
+  ]
+
+  for (const site of scrapeSites) {
+    await prisma.scrapeSite.create({ data: site })
+  }
+
+  console.log(`✅ Seeded ${scrapeSites.length} scraping sites (Gucci, Prada, Amazon, Temu)`)
+
   console.log('🎉 Seed complete!')
 }
 

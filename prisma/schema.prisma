@@ -115,3 +115,56 @@ model MobileToken {
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+// ── Web Scraping Models ──
+
+model ScrapeSite {
+  id          String   @id @default(cuid())
+  name        String
+  url         String
+  brand       String
+  category    String   @default("all")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  scrapeJobs  ScrapeJob[]
+  scrapedProducts ScrapedProduct[]
+}
+
+model ScrapedProduct {
+  id            String   @id @default(cuid())
+  name          String
+  brand         String
+  category      String
+  url           String
+  price         Float
+  currency      String   @default("USD")
+  imageUrl      String
+  description   String?
+  siteId        String
+  scrapedAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  site          ScrapeSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([brand])
+  @@index([category])
+  @@index([siteId])
+}
+
+model ScrapeJob {
+  id            String   @id @default(cuid())
+  siteId        String
+  status        String   @default("pending")  // pending | running | completed | failed
+  productsFound Int      @default(0)
+  error         String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+
+  site          ScrapeSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@index([status])
+}
