@@ -1,34 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/db'
 import { authenticateMobileRequest } from '@/lib/mobile-auth'
+import { prisma } from '@/lib/db'
 
 /**
- * Resolve the current user from either a NextAuth session (web) or
- * a Bearer token (mobile).  Returns { id, email } or null.
+ * GET /api/mobile/wardrobe
+ *
+ * Get the authenticated user's wardrobe items.
+ * Optionally filter by category.
  */
-async function resolveUser(req: NextRequest) {
-  // Try session first (web)
-  const session = await getServerSession(authOptions)
-  if (session?.user?.id && session.user.email) {
-    return { id: session.user.id, email: session.user.email }
-  }
-  // Fall back to Bearer token (mobile)
-  const mobileUser = await authenticateMobileRequest(req)
-  if (mobileUser) {
-    return { id: mobileUser.id, email: mobileUser.email }
-  }
-  return null
-}
-
 export async function GET(req: NextRequest) {
-  try {
-    const user = await resolveUser(req)
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const user = await authenticateMobileRequest(req)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  try {
     const { searchParams } = new URL(req.url)
     const category = searchParams.get('category')
 
@@ -49,21 +35,28 @@ export async function GET(req: NextRequest) {
   }
 }
 
+/**
+ * POST /api/mobile/wardrobe
+ *
+ * Add an item to the user's wardrobe.
+ */
 export async function POST(req: NextRequest) {
-  try {
-    const user = await resolveUser(req)
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const user = await authenticateMobileRequest(req)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-    const body = await req.json()
-    const { productId, category, notes } = body
+  try {
+    const { productId, category, notes } = await req.json()
 
     if (!productId || !category) {
-      return NextResponse.json({ error: 'productId and category are required' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'productId and category are required' },
+        { status: 400 }
+      )
     }
 
-    // Prevent duplicates in same category
+    // Prevent duplicates
     const existing = await prisma.wardrobeItem.findFirst({
       where: { userId: user.id, productId, category },
     })
@@ -71,7 +64,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Item already in wardrobe', data: existing })
     }
 
-    const newItem = await prisma.wardrobeItem.create({
+    const item = await prisma.wardrobeItem.create({
       data: {
         userId: user.id,
         productId,
@@ -81,19 +74,28 @@ export async function POST(req: NextRequest) {
       include: { product: true },
     })
 
-    return NextResponse.json({ data: newItem, message: 'Item added to wardrobe' }, { status: 201 })
+    return NextResponse.json(
+      { data: item, message: 'Item added to wardrobe' },
+      { status: 201 }
+    )
   } catch {
     return NextResponse.json({ error: 'Failed to update wardrobe' }, { status: 500 })
   }
 }
 
+/**
+ * DELETE /api/mobile/wardrobe
+ *
+ * Remove an item from the user's wardrobe.
+ * Query params: ?productId=xxx&category=xxx
+ */
 export async function DELETE(req: NextRequest) {
-  try {
-    const user = await resolveUser(req)
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const user = await authenticateMobileRequest(req)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  try {
     const { searchParams } = new URL(req.url)
     const productId = searchParams.get('productId')
     const category = searchParams.get('category')

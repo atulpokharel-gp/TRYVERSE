@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/db'
 import { authenticateMobileRequest } from '@/lib/mobile-auth'
+import { prisma } from '@/lib/db'
 
 const calculateBodyShape = (chest: number, waist: number, hips: number, shoulders: number): string => {
   const waistRatio = waist / hips
@@ -26,28 +24,17 @@ const calculateSize = (chest: number, waist: number, hips: number): string => {
 }
 
 /**
- * Resolve the current user from either a NextAuth session (web) or
- * a Bearer token (mobile).
+ * GET /api/mobile/body-profile
+ *
+ * Get the authenticated user's body profile.
  */
-async function resolveUser(req: NextRequest) {
-  const session = await getServerSession(authOptions)
-  if (session?.user?.id) {
-    return { id: session.user.id }
-  }
-  const mobileUser = await authenticateMobileRequest(req)
-  if (mobileUser) {
-    return { id: mobileUser.id }
-  }
-  return null
-}
-
 export async function GET(req: NextRequest) {
-  try {
-    const user = await resolveUser(req)
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const user = await authenticateMobileRequest(req)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  try {
     const profile = await prisma.bodyProfile.findUnique({
       where: { userId: user.id },
     })
@@ -62,13 +49,18 @@ export async function GET(req: NextRequest) {
   }
 }
 
+/**
+ * POST /api/mobile/body-profile
+ *
+ * Create or update the authenticated user's body profile.
+ */
 export async function POST(req: NextRequest) {
-  try {
-    const user = await resolveUser(req)
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const user = await authenticateMobileRequest(req)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  try {
     const body = await req.json()
     const { height, weight, chest, waist, hips, shoulders, fitNotes } = body
 
@@ -107,10 +99,10 @@ export async function POST(req: NextRequest) {
       update: data,
     })
 
-    return NextResponse.json({
-      data: profile,
-      message: 'Body profile saved successfully',
-    }, { status: 201 })
+    return NextResponse.json(
+      { data: profile, message: 'Body profile saved successfully' },
+      { status: 201 }
+    )
   } catch {
     return NextResponse.json({ error: 'Failed to save body profile' }, { status: 500 })
   }
